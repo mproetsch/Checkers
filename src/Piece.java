@@ -1,12 +1,11 @@
 /** A Piece on the game board that can be either red or black
  * 
  * 
- * @author patriotpie
+ * @author Matthew Proetsch
  * @version 0.9b
  */
-
 public class Piece {
-
+	
 	
 	/** The current row of the game board that this Piece resides on */
 	private int row;
@@ -18,7 +17,7 @@ public class Piece {
 	enum Color { RED, BLACK }
 	
 	/** The Color of this Piece */
-	private Piece.Color color;
+	public Piece.Color color;
 	
 	/**Initialize a new Piece with the give color
 	 * 
@@ -66,6 +65,28 @@ public class Piece {
 	public void setLoc(int row, int col) {
 		this.row = row;
 		this.col = col;
+	}
+
+	
+	
+	/** Get the String representation of this Piece
+	 * 
+	 * @return					The String representation of this Piece
+	 */
+	public String toString() {
+		
+		StringBuilder s = new StringBuilder();
+		
+		if(this.color == Piece.Color.BLACK)
+			s.append("Black ");
+		
+		else
+			s.append("Red ");
+		
+		s.append("piece at row " + Integer.toString(this.getRow()) + 
+				 ", col " + Integer.toString(this.getCol()));
+		
+		return s.toString();
 	}
 
 }
