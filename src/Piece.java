@@ -12,12 +12,14 @@ public class Piece {
 	
 	/** The current column of the game board that this Piece resides on */
 	private int col;
+
 	
 	/** Possible Piece colors */
 	enum Color { RED, BLACK }
 	
 	/** The Color of this Piece */
 	public Piece.Color color;
+	
 	
 	/**Initialize a new Piece with the give color
 	 * 

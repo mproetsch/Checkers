@@ -1,10 +1,4 @@
-import java.awt.GridLayout;
-
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.util.Vector;
-import javax.swing.*;
 
 
 /** Stores the game board and relevant information, such as which pieces are on
@@ -13,8 +7,8 @@ import javax.swing.*;
  * @author Matthew Proetsch
  * @version 0.9b
  */
-@SuppressWarnings("serial")
-public class Board extends JPanel {
+
+public class Board {
 
     /** Number of rows */
     private static final int rows = 8;
@@ -27,8 +21,6 @@ public class Board extends JPanel {
     /** Constructor takes no args and produces a Board of size rows x cols with alternating background colors */
     public Board() {
     	
-    	this.setLayout(new GridLayout(8, 8));
-		
 		
     	gameBoard = new Square[rows][cols];
     	
@@ -48,16 +40,11 @@ public class Board extends JPanel {
     		
     		lastcolor = !lastcolor;
     	}
-    	
-    	//Add each element in gameBoard to this JPanel
-    	for(int i = 0; i < rows; i++)
-    		for(int j = 0; j < rows; j++)
-    			this.add(gameBoard[i][j]);
-    	
-    	//Implement a f*cking MouseListener
 
     	
     }
+    
+
     
     
 
@@ -86,7 +73,7 @@ public class Board extends JPanel {
     		for(int j = 0; j < cols; j++) {
     			
     			Square sq = this.getSquare(i, j);
-    			sq.paint(sq.getGraphics());
+    			sq.repaint();
     		}
     }
     
@@ -238,6 +225,50 @@ public class Board extends JPanel {
 		return possibleMoves;
 		
 	}
+	
+	
+	/** Perform a move on the board.
+	 * 
+	 * 
+	 * @param from 				The square from which we are moving
+	 * @param to				The square to which we are moving
+	 * @return					True if a jump has been performed, false if it's just a normal move
+	 */
+	public boolean move(Square from, Square to) {
+		boolean jumpPerformed = false;
+		
+		Piece beingMoved = from.getOccupant();
+		
+		int oldRow = from.getRow(), newRow = to.getRow();
+		int oldCol = from.getCol(), newCol = to.getCol();
+		
+		from.setOccupant(null);
+		beingMoved.setLoc(to.getRow(), to.getCol());
+		to.setOccupant(beingMoved);
+		
+		if(Math.abs(oldRow - newRow) > 1 || Math.abs(oldCol - newCol) > 1) {
+			//A jump has been performed, so get the Square that lies between from and to
+			int takeRow = (oldRow + newRow) / 2;
+			int takeCol = (oldCol + newCol) / 2;
+			
+			Square takeSquare = getSquare(takeRow, takeCol);
+			takeSquare.setOccupant(null);
+			takeSquare.update(takeSquare.getGraphics());
+			
+			jumpPerformed = true;
+			
+		}
+		
+		from.update(from.getGraphics());
+		to.update(to.getGraphics());
+		
+		return jumpPerformed;
+		
+		
+	}
+
+
+
     
     
 }

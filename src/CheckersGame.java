@@ -1,4 +1,3 @@
-import java.awt.Canvas;
 import java.awt.FlowLayout;
 import java.awt.event.*;
 import java.awt.*;
@@ -14,14 +13,13 @@ import javax.swing.*;
  */
 
 
-
-public class CheckersGame {
+@SuppressWarnings("serial")
+public class CheckersGame extends JPanel implements MouseListener {
 	
 	private JFrame frame;
 	private JPanel superpanel;
 	
 	private final int borderWidth = 1;
-	
 	
 	/** The board which will store our game's state */
 	private Board board;
@@ -33,7 +31,10 @@ public class CheckersGame {
 	private int redCheckersLeft = 15;
 
 	/** Hold a reference to the currently selected Piece */
-	private Piece selectedPiece;
+	private Square selectedSquare;
+	
+	/** Maintain a Vector<Square> that contains the possible next moves */
+	private Vector<Square> possibleMoves;
 	
 	/** Constructor takes no arguments and forms a new game */
 	public CheckersGame() {
@@ -41,19 +42,118 @@ public class CheckersGame {
 		frame = new JFrame("JCheckers");
 		frame.setLayout(new FlowLayout());
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-	
+		
+		superpanel = new JPanel(new GridLayout(8, 8));
 		
 		board = new Board();
 		board.placeStartingPieces();
-		//board.redraw();
+		board.redraw();
 		
-		frame.add(board);
+		addBoardToPanel(board, superpanel);
+		
+		
+		frame.add(superpanel);
 		frame.pack();
 		
 		frame.setVisible(true);
-		
 	}
 	
+	@Override
+	public void mouseClicked(MouseEvent e) {
+		
+
+		Square sel = (Square)e.getComponent();
+		
+		
+		if(!sel.isOccupied() && selectedSquare == null) {
+			//The user does not have a selected Piece, and has tried to select an empty location
+			JOptionPane.showMessageDialog(null, "No piece at row " + sel.getRow() + ", col " + sel.getCol());
+		}
+		
+		else if(!sel.isOccupied() && selectedSquare != null) {
+			//The user is trying to make a move by moving from the selectedSquare to the one they just clicked
+			//First check to see if their choice corresponds to a square in possibleMoves
+			
+			boolean found = false;
+			for(Square choice : possibleMoves) {
+				if(choice.equals(sel)) {
+					//Perform move
+					boolean jumped = board.move(selectedSquare, sel);
+					found = true;
+				}
+			}
+			
+			if(found) {
+				for(Square curr : possibleMoves) 
+					curr.setHighlight(false);
+				selectedSquare.setHighlight(false);
+				selectedSquare = null;
+				}
+			
+			if(!found) 
+				//Tell the user the obvious: that they can't move there.
+				JOptionPane.showMessageDialog(null, "Invalid move choice");
+		}
+		
+		
+		else if(selectedSquare == null) {
+			//There is currently no square selected, so proceed to highlight all possible moves
+			selectedSquare = sel;
+			selectedSquare.setHighlight(true);
+		
+			possibleMoves = board.getPossibleMoves(selectedSquare.getOccupant());
+			for(Square highlight : possibleMoves)
+				highlight.setHighlight(true);
+			
+		}
+		
+		else if(sel.equals(selectedSquare)) {
+			//The user has deselected the current square
+			selectedSquare.setHighlight(false);
+			
+			for(Square unHighlight : possibleMoves)
+				unHighlight.setHighlight(false);
+			
+			selectedSquare = null;
+		}
+		
+		else if(!sel.equals(selectedSquare)) {
+			//The user has clicked on a different square than the one currently selected
+			selectedSquare.setHighlight(false);
+			
+			for(Square unHighlight : possibleMoves)
+				unHighlight.setHighlight(false);
+			
+			//Reset selectedSquare to the one currently under the cursor
+			selectedSquare = sel;
+			selectedSquare.setHighlight(true);
+			possibleMoves = board.getPossibleMoves(selectedSquare.getOccupant());
+			for(Square Highlight : possibleMoves)
+				Highlight.setHighlight(true);
+			
+		}
+		
+	}
+
+	public void mouseEntered(MouseEvent e) {}
+	public void mouseExited(MouseEvent e) {}
+	public void mousePressed(MouseEvent e) {}
+	public void mouseReleased(MouseEvent e) {}
+	
+	public void addBoardToPanel(Board b, JPanel p) {
+		for(int i = 0; i < 8; i++) {
+			for(int j = 0; j < 8; j++) {
+				Square sq = b.getSquare(i, j);
+				sq.addMouseListener(this);
+				p.add(sq);
+			}
+		}
+	}
+	
+	
+	public void CreateAndShowGUI() {
+
+	}
 
 	
 	/** Determine if a game has yet ended
@@ -85,21 +185,6 @@ public class CheckersGame {
 		return null;
 	}
 	
-	
-	/** Draws the current state of the game to the screen 
-	 * 
-	 * @param b 				The board to be drawn
-	 * @param panel 			The panel on which to draw it
-	 */
-	public void drawBoard(Board b) {
-		
-		for(int i = 0; i < 8; i++) 
-			for(int j = 0; j < 8; j++) {
-				
-				
-				
-			}
-	}
 	
 	public static void main(String[] args) {
 		new CheckersGame();

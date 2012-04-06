@@ -1,6 +1,4 @@
 import java.awt.*;
-import java.awt.event.MouseListener;
-import java.awt.event.*;
 
 /** Represents a single square contained in Board
  * 
@@ -18,8 +16,6 @@ public class Square extends Canvas {
     /** The background color of this Square */
 	private BackgroundColor bgColor;
     
-    /** Whether or not this Square is selected */
-    private boolean selected = false;
     
     /** Whether or not this Square is occupied */
     private boolean occupied;
@@ -70,13 +66,6 @@ public class Square extends Canvas {
         return this.occupied;
     }
     
-    /** Return whether or not this Square is selected
-     * 
-     * @return					Whether or not this Square is selected
-     */
-    public boolean isSelected() {
-    	return this.selected;
-    }
     
     /** Get the row of the game board that this square represents
      * 
@@ -112,18 +101,6 @@ public class Square extends Canvas {
     
     
     
-    
-    
-    
-    /** Set the selection status of this Square
-     * 
-     * @param s 					Whether or not this Square is selected
-     */
-    public void setSelected(boolean s) {
-    	
-    	this.selected = s;
-    }
-    
     /** Set whether or not this Square is highlighted
      * 
      * @param doHighlight 			Whether or not this square should be highlighted
@@ -132,7 +109,7 @@ public class Square extends Canvas {
     	
     	Graphics g = this.getGraphics();
     	
-		this.paint(g);
+		//this.repaint();
     	if(doHighlight) {
     		//Draw a yellow rect around the border of this Square and
     		//and highlight where a piece may belong
@@ -140,18 +117,14 @@ public class Square extends Canvas {
 	    	g.setColor(Color.YELLOW);
 	    	g.drawRect(0, 0, 63, 63);
 	    	
-	    	g.drawOval(5, 5, 45, 45);
+	    	if(!this.isOccupied())
+	    		g.drawOval(6, 6, 50, 50);
     	}
+    	else
+    		super.update(this.getGraphics());
     	
     }
 
-    /** Set this piece to become occupied or free
-     *
-     * @param occ       	True if piece should be occupied, false otherwise
-     */
-    private void setOccupied(boolean occ) {
-        this.occupied = occ;
-    }
 
     /** Set the occupant of this Square
      *
@@ -161,14 +134,14 @@ public class Square extends Canvas {
     	if(visitor != null) {
     		
     		this.occupant = visitor;
-    		this.setOccupied(true);
+    		this.occupied = true;
     		
     	}
     	
     	else {
     		
     		this.occupant = null;
-    		this.setOccupied(false);
+    		this.occupied = false;
     		
     	}
     }
@@ -196,7 +169,7 @@ public class Square extends Canvas {
 			else
 				g.setColor(Color.BLACK);
 			
-			g.fillOval(10, 10, 44, 44);
+			g.fillOval(7, 7, 49, 49);
 		}
 		
 		else
