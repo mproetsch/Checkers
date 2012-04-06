@@ -36,6 +36,9 @@ public class CheckersGame extends JPanel implements MouseListener {
 	/** Maintain a Vector<Square> that contains the possible next moves */
 	private Vector<Square> possibleMoves;
 	
+	/** Keep track of the current turn */
+	private Piece.Color currentTurn;
+	
 	/** Constructor takes no arguments and forms a new game */
 	public CheckersGame() {
 		
@@ -56,6 +59,8 @@ public class CheckersGame extends JPanel implements MouseListener {
 		frame.pack();
 		
 		frame.setVisible(true);
+		
+		currentTurn = Piece.Color.BLACK;
 	}
 	
 	@Override
@@ -64,6 +69,12 @@ public class CheckersGame extends JPanel implements MouseListener {
 
 		Square sel = (Square)e.getComponent();
 		
+		//Check to see if the user highlighted a piece that corresponds to their turn
+		if(sel.isOccupied())
+			if(sel.getOccupant().getColor() != currentTurn) {
+				JOptionPane.showMessageDialog(null, "You can't play your opponent's piece!");
+				return;
+			}
 		
 		if(!sel.isOccupied() && selectedSquare == null) {
 			//The user does not have a selected Piece, and has tried to select an empty location
@@ -75,22 +86,38 @@ public class CheckersGame extends JPanel implements MouseListener {
 			//First check to see if their choice corresponds to a square in possibleMoves
 			
 			boolean found = false;
+			boolean jumped = false;
+			
 			for(Square choice : possibleMoves) {
 				if(choice.equals(sel)) {
-					//Perform move
-					boolean jumped = board.move(selectedSquare, sel);
+					//Move found in the Vector of possible moves, so perform it
+					jumped = board.move(selectedSquare, sel);
 					found = true;
+				}
+			}
+			
+			if(jumped) {
+				if(currentTurn == Piece.Color.BLACK) {
+					redCheckersLeft--;
+				}
+				else
+					blackCheckersLeft--;
+				
+				if(gameOver()) {
+					JOptionPane.showMessageDialog(null, winner() + " wins!");
 				}
 			}
 			
 			if(found) {
 				for(Square curr : possibleMoves) 
 					curr.setHighlight(false);
+				
 				selectedSquare.setHighlight(false);
 				selectedSquare = null;
+				endTurn(currentTurn);
 				}
 			
-			if(!found) 
+			else if(!found) 
 				//Tell the user the obvious: that they can't move there.
 				JOptionPane.showMessageDialog(null, "Invalid move choice");
 		}
@@ -185,6 +212,14 @@ public class CheckersGame extends JPanel implements MouseListener {
 		return null;
 	}
 	
+	private void endTurn(Piece.Color turn) {
+		if(turn == Piece.Color.BLACK) {
+			turn = Piece.Color.RED;
+		}
+		else {
+			turn = Piece.Color.BLACK;
+		}
+	}
 	
 	public static void main(String[] args) {
 		new CheckersGame();

@@ -154,8 +154,11 @@ public class Board {
 		int row = p.getRow();
 		int col = p.getCol();
 		
+		//Begin checking which moves are possible, keeping in mind that only black checkers may move up
+		//and only red checkers may move downwards
+		
 		//Check moves to the top-left of this piece
-		if(Board.inBounds(row-1, col-1)) {
+		if(Board.inBounds(row-1, col-1) && pColor == Piece.Color.BLACK) {
 			
 			if(!this.getSquare(row-1, col-1).isOccupied())
 				possibleMoves.add(this.getSquare(row-1, col-1));
@@ -175,7 +178,7 @@ public class Board {
 		}
 		
 		//Check moves to the top-right of this piece
-		if(Board.inBounds(row-1, col+1)) {
+		if(Board.inBounds(row-1, col+1) && pColor == Piece.Color.BLACK) {
 			
 			if(!this.getSquare(row-1, col+1).isOccupied())
 				possibleMoves.add(this.getSquare(row-1, col+1));
@@ -190,7 +193,7 @@ public class Board {
 		}
 		
 		//check moves to the bottom-left of this piece
-		if(Board.inBounds(row+1, col-1)) {
+		if(Board.inBounds(row+1, col-1) && pColor == Piece.Color.RED) {
 			
 			if(!this.getSquare(row+1, col-1).isOccupied())
 				possibleMoves.add(this.getSquare(row+1, col-1));
@@ -207,7 +210,7 @@ public class Board {
 		}
 		
 		//check moves to the bottom-right of this piece
-		if(Board.inBounds(row+1, col+1)) {
+		if(Board.inBounds(row+1, col+1) && pColor == Piece.Color.RED) {
 			
 			if(!this.getSquare(row+1, col+1).isOccupied())
 				possibleMoves.add(this.getSquare(row+1, col+1));

@@ -107,18 +107,23 @@ public class Square extends Canvas {
      */
     public void setHighlight(boolean doHighlight) {
     	
-    	Graphics g = this.getGraphics();
     	
-		//this.repaint();
-    	if(doHighlight) {
-    		//Draw a yellow rect around the border of this Square and
-    		//and highlight where a piece may belong
-    		
-	    	g.setColor(Color.YELLOW);
-	    	g.drawRect(0, 0, 63, 63);
-	    	
+    	Graphics g = this.getGraphics();
+    	g.setColor(Color.YELLOW);
+    	
+		if(doHighlight) {
+
 	    	if(!this.isOccupied())
-	    		g.drawOval(6, 6, 50, 50);
+	    		//Draw a dotted oval where this piece may land
+	    		for(int i = 0; i < 360; i+= 30)
+	    			g.drawArc(7, 7, 49, 49, i, 15);
+	    	
+	    	else {
+	    		//Draw a yellow rect around the border of this Square 
+	    		
+	    		g.draw3DRect(2, 2, 61, 61, false);
+	    		
+	    	}
     	}
     	else
     		super.update(this.getGraphics());
