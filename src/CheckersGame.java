@@ -19,16 +19,19 @@ public class CheckersGame extends JPanel implements MouseListener {
 	private JFrame frame;
 	private JPanel superpanel;
 	
+	/** Keep track of the current turn */
+	private Color currentTurn;
+	
 	private final int borderWidth = 1;
 	
 	/** The board which will store our game's state */
 	private Board board;
 	
 	/** The number of checkers remaining for Black side */
-	private int blackCheckersLeft = 15;
+	private int blackCheckersLeft;
 	
 	/** The number of checkers remaining for Red side */
-	private int redCheckersLeft = 15;
+	private int redCheckersLeft;
 
 	/** Hold a reference to the currently selected Piece */
 	private Square selectedSquare;
@@ -36,8 +39,6 @@ public class CheckersGame extends JPanel implements MouseListener {
 	/** Maintain a Vector<Square> that contains the possible next moves */
 	private Vector<Square> possibleMoves;
 	
-	/** Keep track of the current turn */
-	private Piece.Color currentTurn;
 	
 	/** Constructor takes no arguments and forms a new game */
 	public CheckersGame() {
@@ -47,6 +48,7 @@ public class CheckersGame extends JPanel implements MouseListener {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		superpanel = new JPanel(new GridLayout(8, 8));
+		superpanel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 		
 		board = new Board();
 		board.placeStartingPieces();
@@ -60,7 +62,10 @@ public class CheckersGame extends JPanel implements MouseListener {
 		
 		frame.setVisible(true);
 		
-		currentTurn = Piece.Color.BLACK;
+		currentTurn = Color.BLACK;
+		
+		redCheckersLeft = 12;
+		blackCheckersLeft = 12;
 	}
 	
 	@Override
@@ -97,11 +102,12 @@ public class CheckersGame extends JPanel implements MouseListener {
 			}
 			
 			if(jumped) {
-				if(currentTurn == Piece.Color.BLACK) {
+				if(currentTurn == Color.BLACK) {
 					redCheckersLeft--;
 				}
-				else
+				else {
 					blackCheckersLeft--;
+				}
 				
 				if(gameOver()) {
 					JOptionPane.showMessageDialog(null, winner() + " wins!");
@@ -114,7 +120,8 @@ public class CheckersGame extends JPanel implements MouseListener {
 				
 				selectedSquare.setHighlight(false);
 				selectedSquare = null;
-				endTurn(currentTurn);
+				
+				endTurn();
 				}
 			
 			else if(!found) 
@@ -123,7 +130,7 @@ public class CheckersGame extends JPanel implements MouseListener {
 		}
 		
 		
-		else if(selectedSquare == null) {
+		else if(sel.isOccupied() && selectedSquare == null) {
 			//There is currently no square selected, so proceed to highlight all possible moves
 			selectedSquare = sel;
 			selectedSquare.setHighlight(true);
@@ -172,7 +179,16 @@ public class CheckersGame extends JPanel implements MouseListener {
 			for(int j = 0; j < 8; j++) {
 				Square sq = b.getSquare(i, j);
 				sq.addMouseListener(this);
-				p.add(sq);
+				
+				JPanel pointlessPanelForBorders = new JPanel(new FlowLayout());
+				pointlessPanelForBorders.setBorder(BorderFactory.createLineBorder(Color.BLACK,
+																					borderWidth));
+				pointlessPanelForBorders.add(sq);
+				if(sq.getBackgroundColor() == Square.BackgroundColor.DARKGRAY)
+					pointlessPanelForBorders.setBackground(Color.DARK_GRAY);
+				else
+					pointlessPanelForBorders.setBackground(Color.LIGHT_GRAY);
+				p.add(pointlessPanelForBorders);
 			}
 		}
 	}
@@ -212,12 +228,14 @@ public class CheckersGame extends JPanel implements MouseListener {
 		return null;
 	}
 	
-	private void endTurn(Piece.Color turn) {
-		if(turn == Piece.Color.BLACK) {
-			turn = Piece.Color.RED;
+	
+	
+	public void endTurn() {
+		if(currentTurn == Color.BLACK) {
+			currentTurn = Color.RED;
 		}
 		else {
-			turn = Piece.Color.BLACK;
+			currentTurn = Color.BLACK;
 		}
 	}
 	
@@ -225,6 +243,5 @@ public class CheckersGame extends JPanel implements MouseListener {
 		new CheckersGame();
 	}
 	
-
 
 }

@@ -1,3 +1,5 @@
+import java.awt.*;
+
 /** A Piece on the game board that can be either red or black
  * 
  * 
@@ -12,13 +14,9 @@ public class Piece {
 	
 	/** The current column of the game board that this Piece resides on */
 	private int col;
-
-	
-	/** Possible Piece colors */
-	enum Color { RED, BLACK }
 	
 	/** The Color of this Piece */
-	public Piece.Color color;
+	public Color color;
 	
 	
 	/**Initialize a new Piece with the give color
@@ -27,7 +25,7 @@ public class Piece {
 	 * @param row		The row of the game board this piece lives on
 	 * @param col		The column of the game board this piece lives on
 	 */
-	public Piece(Piece.Color c, int row, int col) {
+	public Piece(Color c, int row, int col) {
 
 		color = c;
 		this.row = row;
@@ -47,7 +45,7 @@ public class Piece {
 	 * 
 	 * @return 				The color of this piece
 	 */
-	public Piece.Color getColor() {
+	public Color getColor() {
 		return color;
 	}
 	
@@ -79,7 +77,7 @@ public class Piece {
 		
 		StringBuilder s = new StringBuilder();
 		
-		if(this.color == Piece.Color.BLACK)
+		if(this.color == Color.BLACK)
 			s.append("Black ");
 		
 		else

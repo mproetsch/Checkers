@@ -109,23 +109,28 @@ public class Square extends Canvas {
     	
     	
     	Graphics g = this.getGraphics();
-    	g.setColor(Color.YELLOW);
     	
 		if(doHighlight) {
 
-	    	if(!this.isOccupied())
+	    	if(!this.isOccupied()) {
+	    		
+	    		g.setColor(Color.BLACK);
+	    	
 	    		//Draw a dotted oval where this piece may land
 	    		for(int i = 0; i < 360; i+= 30)
-	    			g.drawArc(7, 7, 49, 49, i, 15);
+	    			g.drawArc(5, 5, 54, 54, i, 15);
+	    	}
 	    	
 	    	else {
 	    		//Draw a yellow rect around the border of this Square 
 	    		
-	    		g.draw3DRect(2, 2, 61, 61, false);
+	    		g.setColor(Color.YELLOW);
+	    		g.draw3DRect(0, 0, 63, 63, false);
 	    		
 	    	}
     	}
     	else
+    		//If this square has a highlight in it, erase it by redrawing the Square
     		super.update(this.getGraphics());
     	
     }
@@ -167,14 +172,11 @@ public class Square extends Canvas {
 		//Either draw a square or clear the rectangle
 		if(this.isOccupied()) {
 			
-			Piece.Color pieceColor = occupant.getColor();
+			Color pieceColor = occupant.getColor();
 			
-			if(pieceColor == Piece.Color.RED)
-				g.setColor(Color.RED);
-			else
-				g.setColor(Color.BLACK);
+			g.setColor(pieceColor);
 			
-			g.fillOval(7, 7, 49, 49);
+			g.fillOval(5, 5, 54, 54);
 		}
 		
 		else

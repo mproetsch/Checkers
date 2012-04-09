@@ -1,4 +1,5 @@
 import java.util.Vector;
+import java.awt.*;
 
 
 /** Stores the game board and relevant information, such as which pieces are on
@@ -102,7 +103,7 @@ public class Board {
 			for(int col = 0; col < 8; col++) {
 				
 				if(put) {
-					this.getSquare(row, col).setOccupant(new Piece(Piece.Color.RED, row, col));
+					this.getSquare(row, col).setOccupant(new Piece(Color.RED, row, col));
 					put = false;
 				}
 				
@@ -121,7 +122,7 @@ public class Board {
 			for(int col = 0; col < 8; col++) {
 				
 				if(put) {
-					this.getSquare(row, col).setOccupant(new Piece(Piece.Color.BLACK, row, col));
+					this.getSquare(row, col).setOccupant(new Piece(Color.BLACK, row, col));
 					put = false;
 				}
 				
@@ -149,7 +150,7 @@ public class Board {
 		 */
 		
 		Vector<Square> possibleMoves = new Vector<Square>();
-		Piece.Color pColor = p.getColor();
+		Color pColor = p.getColor();
 		
 		int row = p.getRow();
 		int col = p.getCol();
@@ -158,7 +159,7 @@ public class Board {
 		//and only red checkers may move downwards
 		
 		//Check moves to the top-left of this piece
-		if(Board.inBounds(row-1, col-1) && pColor == Piece.Color.BLACK) {
+		if(Board.inBounds(row-1, col-1) && pColor == Color.BLACK) {
 			
 			if(!this.getSquare(row-1, col-1).isOccupied())
 				possibleMoves.add(this.getSquare(row-1, col-1));
@@ -178,7 +179,7 @@ public class Board {
 		}
 		
 		//Check moves to the top-right of this piece
-		if(Board.inBounds(row-1, col+1) && pColor == Piece.Color.BLACK) {
+		if(Board.inBounds(row-1, col+1) && pColor == Color.BLACK) {
 			
 			if(!this.getSquare(row-1, col+1).isOccupied())
 				possibleMoves.add(this.getSquare(row-1, col+1));
@@ -193,7 +194,7 @@ public class Board {
 		}
 		
 		//check moves to the bottom-left of this piece
-		if(Board.inBounds(row+1, col-1) && pColor == Piece.Color.RED) {
+		if(Board.inBounds(row+1, col-1) && pColor == Color.RED) {
 			
 			if(!this.getSquare(row+1, col-1).isOccupied())
 				possibleMoves.add(this.getSquare(row+1, col-1));
@@ -210,7 +211,7 @@ public class Board {
 		}
 		
 		//check moves to the bottom-right of this piece
-		if(Board.inBounds(row+1, col+1) && pColor == Piece.Color.RED) {
+		if(Board.inBounds(row+1, col+1) && pColor == Color.RED) {
 			
 			if(!this.getSquare(row+1, col+1).isOccupied())
 				possibleMoves.add(this.getSquare(row+1, col+1));
