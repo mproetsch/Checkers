@@ -196,6 +196,12 @@ public class SimpleCheckersGUI implements MouseListener,
 					
 					if(restart == JOptionPane.YES_OPTION)
 						restartGame();
+					else {
+						frame.setVisible(false);
+						frame.dispose();
+					}
+						
+					
 				}
 			}
 			
