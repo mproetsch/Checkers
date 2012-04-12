@@ -6,7 +6,8 @@ import java.util.Vector;
 
 import javax.swing.*;
 
-/** Creates a new game of Checkers and provides the GUI with an interface to access to the game's logic. Also creates a GUI frontend
+/** Creates a new instance of Board and draws a necessary graphical interface
+ *  for the user to select possible moves. Provides options to exit and to start a new game
  * 
  * 
  * @author Matthew Proetsch
@@ -14,7 +15,8 @@ import javax.swing.*;
  */
 
 
-public class SimpleCheckersGUI implements MouseListener {
+public class SimpleCheckersGUI implements MouseListener,
+									ActionListener {
 	
 	/** The frame that will serve to holds the contents of our game */
 	private JFrame frame;
@@ -25,9 +27,22 @@ public class SimpleCheckersGUI implements MouseListener {
 	/** The label that will keep track of remaining pieces for each side */
 	private JLabel piecesLabel;
 	
+	/** Menubar containing Exit and New Game options */
+	private JMenuBar menubar;
+	
+	/** File menu */
+	private JMenu fileMenu;
+	
+	/** New Game menu item */
+	private JMenuItem newGame;
+	
+	/** Exit menu item */
+	private JMenuItem exit;
+	
 	/** Keep track of the current turn */
 	private Color currentTurn;
 	
+	/** Border width between squares in the game board */
 	private final int borderWidth = 1;
 	
 	/** The board which will store our game's state */
@@ -65,32 +80,48 @@ public class SimpleCheckersGUI implements MouseListener {
 		//event-driven onward
 	}
 	
-	
+	/** Set up the visual interface to the game */
 	public void CreateAndShowGUI() {
 		
-		frame = new JFrame("JCheckers");
+		//Set up the window information
+		frame = new JFrame("SimpleCheckersGUI - Matthew Proetsch");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setLayout(new FlowLayout());
 		
 		frame.getContentPane().setLayout(
 				new BoxLayout(frame.getContentPane(), BoxLayout.Y_AXIS));
 		
+		//Give our Board a visual representation
 		boardpanel = new JPanel(new GridLayout(8, 8));
 		boardpanel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 		
 		board = new Board();
 		board.placeStartingPieces();
 		
+		//Keep track of how many pieces are left
 		piecesLabel = new JLabel(" ");
 		piecesLabel.setHorizontalTextPosition(JLabel.LEFT);
 		piecesLabel.setVerticalTextPosition(JLabel.BOTTOM);
-		//piecesLabel.setSize(piecesLabel.getPreferredSize());
 		
+		//Add the menubar to the window
+		menubar = new JMenuBar();
+		fileMenu = new JMenu("File");
+		
+		newGame = new JMenuItem("New Game");
+		newGame.addActionListener(this);
+		
+		exit = new JMenuItem("Exit");
+		exit.addActionListener(this);
+		
+		fileMenu.add(newGame);
+		fileMenu.add(exit);
+		menubar.add(fileMenu);
+
+		//Add our board to boardpanel and add everything to the window
 		addBoardToPanel(board, boardpanel);
-		
-		
 		frame.add(boardpanel);
 		frame.add(piecesLabel);
+		frame.setJMenuBar(menubar);
 		frame.pack();
 		
 		//Resize the frame because for some reason it wants to cut off the last character of our JLabel
@@ -145,11 +176,6 @@ public class SimpleCheckersGUI implements MouseListener {
 						blackCheckersLeft--;
 					}
 					
-					
-					
-					if(gameOver()) {
-						JOptionPane.showMessageDialog(null, winner() + " wins!");
-					}
 				}
 				
 				for(Square curr : possibleMoves) 
@@ -161,7 +187,17 @@ public class SimpleCheckersGUI implements MouseListener {
 				endTurn();
 				//Update the number of checkers left
 				updateStatus();
+				
+				
+				//See if that move ended the game
+				String winningStr = winner();
+				if(winningStr != null) {
+					int restart = JOptionPane.showConfirmDialog(null, winningStr + " Do you want to start a new game?", "New Game?", JOptionPane.YES_NO_OPTION);
+					
+					if(restart == JOptionPane.YES_OPTION)
+						restartGame();
 				}
+			}
 			
 			else if(!found) 
 				//Tell the user the obvious: that they can't move there.
@@ -208,10 +244,25 @@ public class SimpleCheckersGUI implements MouseListener {
 		
 	}
 
+	//Must implement as per MouseListener
 	public void mouseEntered(MouseEvent e) {}
 	public void mouseExited(MouseEvent e) {}
 	public void mousePressed(MouseEvent e) {}
 	public void mouseReleased(MouseEvent e) {}
+	
+	
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		if(e.getSource() == newGame) {
+			restartGame();
+		}
+		else if(e.getSource() == exit) {
+			frame.setVisible(false);
+			frame.dispose();
+		}
+		
+	}
+	
 	
 	public void addBoardToPanel(Board b, JPanel p) {
 		for(int i = 0; i < 8; i++) {
@@ -219,15 +270,15 @@ public class SimpleCheckersGUI implements MouseListener {
 				Square sq = b.getSquare(i, j);
 				sq.addMouseListener(this);
 				
-				JPanel pointlessPanelForBorders = new JPanel(new FlowLayout());
-				pointlessPanelForBorders.setBorder(BorderFactory.createLineBorder(Color.BLACK,
+				JPanel PanelForBorders = new JPanel(new FlowLayout());
+				PanelForBorders.setBorder(BorderFactory.createLineBorder(Color.BLACK,
 																					borderWidth));
-				pointlessPanelForBorders.add(sq);
+				PanelForBorders.add(sq);
 				if(sq.getBackgroundColor() == Square.BackgroundColor.DARKGRAY)
-					pointlessPanelForBorders.setBackground(Color.DARK_GRAY);
+					PanelForBorders.setBackground(Color.DARK_GRAY);
 				else
-					pointlessPanelForBorders.setBackground(Color.LIGHT_GRAY);
-				p.add(pointlessPanelForBorders);
+					PanelForBorders.setBackground(Color.LIGHT_GRAY);
+				p.add(PanelForBorders);
 			}
 		}
 	}
@@ -254,19 +305,56 @@ public class SimpleCheckersGUI implements MouseListener {
 	}
 	
 	
-	/** Return a String representation of the winner of the game
+	/** Find out, if the game is over, who won and how that side won
 	 * 
-	 * @return 				"Red" if Red won; "Black" if Black won
+	 * @return 				A String containing the side which won, as well as how they won (took other side's pieces, other side could make no more moves)
 	 */
 	public String winner() {
-		if (this.gameOver()) {
-			if(this.blackCheckersLeft == 0)
-				return "Red";
+		
+		//Check first ending condition: one side loses all pieces
+		if(blackCheckersLeft == 0)
+			return "Red has won by taking Black's pieces!";
 			
-			return "Black";
+		if(redCheckersLeft == 0)
+			return "Black has won by taking Red's pieces!";
+		
+		
+		//Check second ending condition: one side cannot move its remaining pieces
+		boolean redCanMove = false;
+		boolean blackCanMove = false;
+		
+		for(int i = 0; i < 8; i++) {
+			for(int j = 0; j < 8; j++) {
+				
+				//Get all possible moves for all pieces currently on the board
+				if(board.getSquare(i, j).isOccupied()) {
+					Vector<Square> potentialMoves = board.getPossibleMoves(board.getSquare(i, j).getOccupant());
+					
+					if(! potentialMoves.isEmpty()) {
+						//The potentialMoves Vector contains at least one square, so that side is capable of making a move
+						//Find out what the color of the piece that can make the move is, then set its <color>CanMove var to true
+						
+						if(board.getSquare(i, j).getOccupant().getColor() == Color.black)
+							blackCanMove = true;
+						else
+							redCanMove = true;
+						
+					}
+				}
+			}
 		}
 		
-		//Make Java happy
+		if(redCanMove && !blackCanMove) {
+			return "Red wins since Black can make no more moves!";
+		}
+		else if(blackCanMove && !redCanMove) {
+			return "Black wins since Red can make no more moves!";
+		}
+		else if(!redCanMove && !blackCanMove) {
+			return "Neither side can make a move!";
+		}
+		
+		//None of the above cases hold true, so the game is not over yet
 		return null;
 	}
 	
@@ -281,9 +369,39 @@ public class SimpleCheckersGUI implements MouseListener {
 		}
 	}
 	
-	public static void main(String[] args) {
-		new CheckersGame();
+	/** End the game and start anew by resetting everything */
+	public void restartGame() {
+		
+		frame.setVisible(false);
+		selectedSquare = null;
+		
+		frame.remove(boardpanel);
+		boardpanel = new JPanel(new GridLayout(8, 8));
+		boardpanel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+		
+		board = new Board();
+		board.placeStartingPieces();
+		
+		addBoardToPanel(board, boardpanel);
+		frame.add(boardpanel, 0);
+		
+		redCheckersLeft = 12;
+		blackCheckersLeft = 12;
+		
+		currentTurn = Color.BLACK;
+		
+		updateStatus();
+		frame.pack();
+		frame.setVisible(true);
+		
 	}
+	
+	public static void main(String[] args) {
+		new SimpleCheckersGUI();
+	}
+
+
+
 	
 
 }

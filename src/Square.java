@@ -177,13 +177,10 @@ public class Square extends Canvas {
 		//Either draw a square or clear the rectangle
 		if(this.isOccupied()) {
 			
-			Color pieceColor = occupant.getColor();
-			
-			g.setColor(pieceColor);
+			g.setColor(occupant.getColor());
 			g.fillOval(5, 5, 54, 54);
 			
-			g.setColor(Color.GRAY);
-//			g.drawOval(arg0, arg1, arg2, arg3)
+
 		}
 		
 		else
