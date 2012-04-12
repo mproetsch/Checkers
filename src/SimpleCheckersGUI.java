@@ -252,6 +252,7 @@ public class SimpleCheckersGUI implements MouseListener,
 	
 	
 	@Override
+	/** Perform the appropriate action when a menu item is clicked */
 	public void actionPerformed(ActionEvent e) {
 		if(e.getSource() == newGame) {
 			restartGame();
@@ -263,7 +264,11 @@ public class SimpleCheckersGUI implements MouseListener,
 		
 	}
 	
-	
+	/** Add the Board to a Panel to create the appearance of a checkerboard
+	 * 
+	 * @param b						The Board to add to a JPanel 
+	 * @param p						the JPanel to be added to
+	 */
 	public void addBoardToPanel(Board b, JPanel p) {
 		for(int i = 0; i < 8; i++) {
 			for(int j = 0; j < 8; j++) {
@@ -284,20 +289,6 @@ public class SimpleCheckersGUI implements MouseListener,
 	}
 	
 	
-
-
-	
-	/** Determine if a game has yet ended
-	 * 
-	 * @return 				True if game has ended, false otherwise
-	 */
-	public boolean gameOver() {
-		if (this.blackCheckersLeft == 0 || this.redCheckersLeft == 0)
-			return true;
-		
-		
-		return false;
-	}
 	
 	/** Update the text of piecesLeft to a string representation of the number of pieces left for both sides */
 	public void updateStatus() {
@@ -396,11 +387,11 @@ public class SimpleCheckersGUI implements MouseListener,
 		
 	}
 	
+	
+	/** Instantiate this class to set the wheels of progress in beautiful event-driven motion */
 	public static void main(String[] args) {
 		new SimpleCheckersGUI();
 	}
-
-
 
 	
 

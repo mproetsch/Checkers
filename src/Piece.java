@@ -19,7 +19,7 @@ public class Piece {
 	public Color color;
 	
 	
-	/**Initialize a new Piece with the give color
+	/**Initialize a new Piece with the given color and at the given position
 	 * 
 	 * @param c			The color of the new Piece
 	 * @param row		The row of the game board this piece lives on

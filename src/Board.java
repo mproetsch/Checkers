@@ -14,9 +14,9 @@ import java.awt.*;
 public class Board {
 
     /** Number of rows */
-    private static final int rows = 8;
+    public static final int rows = 8;
     /** Number of columns */
-    private static final int cols = 8;
+    public static final int cols = 8;
     /** An array of Squares that represents the game board */
     private Square[][] gameBoard;
 
@@ -69,23 +69,13 @@ public class Board {
     	
     }
     
-    /** Have this Board update itself */
-    public void redraw() {
-    	
-    	for(int i = 0; i < rows; i++)
-    		for(int j = 0; j < cols; j++) {
-    			
-    			Square sq = this.getSquare(i, j);
-    			sq.repaint();
-    		}
-    }
     
-    
-    /** Returns the given square at (row, col) or null if out-of-bounds
+    /** Get a particular Square contained in this Board
      * 
      * @param row		The row at which the square should be
      * @param col		The column at which the square should be
-     * @return			The square at (row, col)
+     * 
+     * @return			The square at (row, col), or null if (row, col) is out-of-bounds
      */
     public Square getSquare(int row, int col) {
         if(inBounds(row, col))
@@ -141,7 +131,6 @@ public class Board {
 	/** Find all possible Squares to which this piece can move
 	 * 
 	 * @param p 				Piece for which moves should be found
-	 * @param b 				Board for which we check moves
 	 * 
 	 * @return					A Vector of Squares to which this piece can move
 	 */

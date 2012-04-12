@@ -33,7 +33,7 @@ public class Square extends Canvas {
     private int col;
 
     
-    /** Make a new Square with the specified background Board.Color
+    /** Make a new Square at the given position with the specified BackgroundColor
      *
      *  @param c        	The background color of this Square
      */
