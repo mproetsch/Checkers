@@ -161,6 +161,11 @@ public class Square extends Canvas {
     
     
     @Override
+    /** Have this square redraw itself, removing potential highlighting and adding/removing an occupant Piece as necessary
+     * 
+     * @param g 						The Graphics object belonging to this Square
+     * 
+     */
 	public void paint(Graphics g) {
 		
 		//Set the Canvas' background color equal to the Square's bgcolor
@@ -175,8 +180,10 @@ public class Square extends Canvas {
 			Color pieceColor = occupant.getColor();
 			
 			g.setColor(pieceColor);
-			
 			g.fillOval(5, 5, 54, 54);
+			
+			g.setColor(Color.GRAY);
+//			g.drawOval(arg0, arg1, arg2, arg3)
 		}
 		
 		else

@@ -1,4 +1,5 @@
 import java.awt.FlowLayout;
+import java.awt.GridLayout;
 import java.awt.event.*;
 import java.awt.*;
 import java.util.Vector;
@@ -13,11 +14,16 @@ import javax.swing.*;
  */
 
 
-@SuppressWarnings("serial")
-public class CheckersGame extends JPanel implements MouseListener {
+public class CheckersGame implements MouseListener {
 	
+	/** The frame that will serve to holds the contents of our game */
 	private JFrame frame;
-	private JPanel superpanel;
+	
+	/** The panel that will hold our Board */
+	private JPanel boardpanel;
+	
+	/** The label that will keep track of remaining pieces for each side */
+	private JLabel piecesLabel;
 	
 	/** Keep track of the current turn */
 	private Color currentTurn;
@@ -43,29 +49,57 @@ public class CheckersGame extends JPanel implements MouseListener {
 	/** Constructor takes no arguments and forms a new game */
 	public CheckersGame() {
 		
-		frame = new JFrame("JCheckers");
-		frame.setLayout(new FlowLayout());
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		//display the interface
+		CreateAndShowGUI();
 		
-		superpanel = new JPanel(new GridLayout(8, 8));
-		superpanel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+		//set the initial turn
+		currentTurn = Color.BLACK;
+		
+		//initial values for checkers
+		redCheckersLeft = 12;
+		blackCheckersLeft = 12;
+		
+		//show how many checkers are left
+		updateStatus();
+		
+		//event-driven onward
+	}
+	
+	
+	public void CreateAndShowGUI() {
+		
+		frame = new JFrame("JCheckers");
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setLayout(new FlowLayout());
+		
+		frame.getContentPane().setLayout(
+				new BoxLayout(frame.getContentPane(), BoxLayout.Y_AXIS));
+		
+		boardpanel = new JPanel(new GridLayout(8, 8));
+		boardpanel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 		
 		board = new Board();
 		board.placeStartingPieces();
-		board.redraw();
 		
-		addBoardToPanel(board, superpanel);
+		piecesLabel = new JLabel(" ");
+		piecesLabel.setHorizontalTextPosition(JLabel.LEFT);
+		piecesLabel.setVerticalTextPosition(JLabel.BOTTOM);
+		//piecesLabel.setSize(piecesLabel.getPreferredSize());
+		
+		addBoardToPanel(board, boardpanel);
 		
 		
-		frame.add(superpanel);
+		frame.add(boardpanel);
+		frame.add(piecesLabel);
 		frame.pack();
 		
+		//Resize the frame because for some reason it wants to cut off the last character of our JLabel
+		Rectangle boundingRect = frame.getBounds();
+		frame.setBounds(boundingRect.x, boundingRect.y, boundingRect.width + 5, boundingRect.height);
+		
 		frame.setVisible(true);
-		
-		currentTurn = Color.BLACK;
-		
-		redCheckersLeft = 12;
-		blackCheckersLeft = 12;
+
+
 	}
 	
 	@Override
@@ -75,15 +109,13 @@ public class CheckersGame extends JPanel implements MouseListener {
 		Square sel = (Square)e.getComponent();
 		
 		//Check to see if the user highlighted a piece that corresponds to their turn
-		if(sel.isOccupied())
-			if(sel.getOccupant().getColor() != currentTurn) {
-				JOptionPane.showMessageDialog(null, "You can't play your opponent's piece!");
-				return;
-			}
+		if(sel.isOccupied() && sel.getOccupant().getColor() != currentTurn) {
+			piecesLabel.setText("Ash! This isn't the time to use that!");
+			return;
+		}
 		
 		if(!sel.isOccupied() && selectedSquare == null) {
-			//The user does not have a selected Piece, and has tried to select an empty location
-			JOptionPane.showMessageDialog(null, "No piece at row " + sel.getRow() + ", col " + sel.getCol());
+			//The user does not have a selected Piece, and has tried to select an empty location, so do nothing
 		}
 		
 		else if(!sel.isOccupied() && selectedSquare != null) {
@@ -96,25 +128,30 @@ public class CheckersGame extends JPanel implements MouseListener {
 			for(Square choice : possibleMoves) {
 				if(choice.equals(sel)) {
 					//Move found in the Vector of possible moves, so perform it
+					//First, store in a variable whether or not a jump was performed
 					jumped = board.move(selectedSquare, sel);
 					found = true;
 				}
 			}
 			
-			if(jumped) {
-				if(currentTurn == Color.BLACK) {
-					redCheckersLeft--;
-				}
-				else {
-					blackCheckersLeft--;
-				}
-				
-				if(gameOver()) {
-					JOptionPane.showMessageDialog(null, winner() + " wins!");
-				}
-			}
+
 			
 			if(found) {
+				if(jumped) {
+					if(currentTurn == Color.BLACK) {
+						redCheckersLeft--;
+					}
+					else {
+						blackCheckersLeft--;
+					}
+					
+					
+					
+					if(gameOver()) {
+						JOptionPane.showMessageDialog(null, winner() + " wins!");
+					}
+				}
+				
 				for(Square curr : possibleMoves) 
 					curr.setHighlight(false);
 				
@@ -122,11 +159,13 @@ public class CheckersGame extends JPanel implements MouseListener {
 				selectedSquare = null;
 				
 				endTurn();
+				//Update the number of checkers left
+				updateStatus();
 				}
 			
 			else if(!found) 
 				//Tell the user the obvious: that they can't move there.
-				JOptionPane.showMessageDialog(null, "Invalid move choice");
+				piecesLabel.setText("Can't let you do that, Dave");
 		}
 		
 		
@@ -194,9 +233,7 @@ public class CheckersGame extends JPanel implements MouseListener {
 	}
 	
 	
-	public void CreateAndShowGUI() {
 
-	}
 
 	
 	/** Determine if a game has yet ended
@@ -209,6 +246,11 @@ public class CheckersGame extends JPanel implements MouseListener {
 		
 		
 		return false;
+	}
+	
+	/** Update the text of piecesLeft to a string representation of the number of pieces left for both sides */
+	public void updateStatus() {
+		piecesLabel.setText("Red pieces left: " + redCheckersLeft + "             Black pieces left: " + blackCheckersLeft);
 	}
 	
 	
@@ -229,7 +271,7 @@ public class CheckersGame extends JPanel implements MouseListener {
 	}
 	
 	
-	
+	/** Switch turns at the end of the current player's turn */
 	public void endTurn() {
 		if(currentTurn == Color.BLACK) {
 			currentTurn = Color.RED;

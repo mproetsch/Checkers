@@ -4,6 +4,8 @@ import java.awt.*;
 
 /** Stores the game board and relevant information, such as which pieces are on
  * which square
+ * 
+ * Note: The Board is the underlying structure that is drawn to the GUI in CheckersGame.java
  *
  * @author Matthew Proetsch
  * @version 0.9b
@@ -231,7 +233,8 @@ public class Board {
 	}
 	
 	
-	/** Perform a move on the board.
+	/** Perform a move on the board. This function does not perform input checking, as it is only called
+	 * once a move has been validated by getPossibleMoves
 	 * 
 	 * 
 	 * @param from 				The square from which we are moving
