@@ -14,7 +14,7 @@ import javax.swing.*;
  */
 
 
-public class CheckersGame implements MouseListener {
+public class SimpleCheckersGUI implements MouseListener {
 	
 	/** The frame that will serve to holds the contents of our game */
 	private JFrame frame;
@@ -47,7 +47,7 @@ public class CheckersGame implements MouseListener {
 	
 	
 	/** Constructor takes no arguments and forms a new game */
-	public CheckersGame() {
+	public SimpleCheckersGUI() {
 		
 		//display the interface
 		CreateAndShowGUI();
