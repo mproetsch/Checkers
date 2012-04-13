@@ -39,14 +39,15 @@ public class Board {
     		for(int j = 0; j < cols; j++) {
     			
     			if(lastcolor)
-    				gameBoard[i][j] = new Square(Square.BackgroundColor.DARKGRAY, i, j);
+    				gameBoard[i][j] = new Square(Square.BackgroundColor.DARK, i, j);
     			else
-    				gameBoard[i][j] = new Square(Square.BackgroundColor.LIGHTGRAY, i, j);
+    				gameBoard[i][j] = new Square(Square.BackgroundColor.LIGHT, i, j);
     			
     			//Toggle lastcolor
     			lastcolor = !lastcolor;
     		}
     		
+    		//Switch starting color for next row
     		lastcolor = !lastcolor;
     	}
 
@@ -98,13 +99,13 @@ public class Board {
 		//Establish the Red side first
 		for(int row = 0; row < 3; row++)
 			for(int col = 0; col < 8; col++)
-				if(getSquare(row, col).getBackgroundColor() == Square.BackgroundColor.DARKGRAY)
+				if(getSquare(row, col).getBackgroundColor() == Square.BackgroundColor.DARK)
 					getSquare(row,col).setOccupant(new Piece(Color.RED, row, col));
 		
 		//Now establish the Black side
 		for(int row = 5; row < 8; row++)
 			for(int col = 0; col < 8; col++)
-				if(getSquare(row, col).getBackgroundColor() == Square.BackgroundColor.DARKGRAY)
+				if(getSquare(row, col).getBackgroundColor() == Square.BackgroundColor.DARK)
 					getSquare(row,col).setOccupant(new Piece(Color.BLACK, row, col));
     }
     

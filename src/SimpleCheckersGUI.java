@@ -324,15 +324,15 @@ public class SimpleCheckersGUI implements MouseListener,
 				Square sq = b.getSquare(i, j);
 				sq.addMouseListener(this);
 				
-				JPanel PanelForBorders = new JPanel(new FlowLayout());
-				PanelForBorders.setBorder(BorderFactory.createLineBorder(Color.BLACK,
+				JPanel ContainerPanel = new JPanel(new FlowLayout());
+				ContainerPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK,
 																					borderWidth));
-				PanelForBorders.add(sq);
-				if(sq.getBackgroundColor() == Square.BackgroundColor.DARKGRAY)
-					PanelForBorders.setBackground(Color.DARK_GRAY);
+				ContainerPanel.add(sq);
+				if(sq.getBackgroundColor() == Square.BackgroundColor.DARK)
+					ContainerPanel.setBackground(Color.DARK_GRAY);
 				else
-					PanelForBorders.setBackground(Color.LIGHT_GRAY);
-				p.add(PanelForBorders);
+					ContainerPanel.setBackground(Color.LIGHT_GRAY);
+				p.add(ContainerPanel);
 			}
 		}
 	}

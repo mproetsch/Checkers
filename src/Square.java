@@ -15,9 +15,10 @@ import java.awt.*;
  */
 @SuppressWarnings("serial")
 public class Square extends Canvas {
+	
     	
-    /** The color that a square should be */
-    enum BackgroundColor { DARKGRAY, LIGHTGRAY }
+    /** The background color that a square should be */
+    public enum BackgroundColor { LIGHT, DARK };
 
     
     /** The background color of this Square */
@@ -48,7 +49,7 @@ public class Square extends Canvas {
     	
     	this.setSize(64, 64);
     	
-    	if(c == BackgroundColor.DARKGRAY)
+    	if(c == BackgroundColor.DARK)
     		this.setBackground(Color.DARK_GRAY);
     	else
     		this.setBackground(Color.LIGHT_GRAY);
@@ -130,7 +131,6 @@ public class Square extends Canvas {
 	    	
 	    	else {
 	    		//Draw a yellow rect around the border of this Square 
-	    		
 	    		g.setColor(Color.YELLOW);
 	    		g.draw3DRect(0, 0, 63, 63, false);
 	    		
@@ -176,8 +176,9 @@ public class Square extends Canvas {
 	public void paint(Graphics g) {
 		
 		//Set the Canvas' background color equal to the Square's bgcolor
-		if(this.getBackgroundColor() == Square.BackgroundColor.DARKGRAY) 
+		if(this.getBackgroundColor() == Square.BackgroundColor.DARK)
 			this.setBackground(Color.DARK_GRAY);
+		
 		else
 			this.setBackground(Color.LIGHT_GRAY);
 		
