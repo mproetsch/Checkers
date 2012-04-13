@@ -3,13 +3,25 @@
  * SimpleCheckersGUI.java (see Javadoc comment for details)
  */
 
+import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
-import java.awt.event.*;
-import java.awt.*;
+import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.Vector;
 
-import javax.swing.*;
+import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 
 /** Creates a new instance of Board and draws a necessary graphical interface
  *  for the user to select possible moves. Provides options to exit and to start a new game
@@ -63,8 +75,6 @@ public class SimpleCheckersGUI implements MouseListener,
 	/** Hold a reference to the currently selected Piece */
 	private Square selectedSquare;
 	
-	/** Maintain a Vector<Square> that contains the possible next moves */
-	private Vector<Square> possibleMoves;
 	
 	
 	/** Constructor takes no arguments and forms a new game */
@@ -74,7 +84,7 @@ public class SimpleCheckersGUI implements MouseListener,
 		CreateAndShowGUI();
 		
 		//set the initial turn
-		currentTurn = Color.BLACK;
+		currentTurn = Color.GREEN;
 		
 		//initial values for checkers
 		redCheckersLeft = 12;
@@ -145,16 +155,63 @@ public class SimpleCheckersGUI implements MouseListener,
 
 		Square sel = (Square)e.getComponent();
 		
-		//Check to see if the user highlighted a piece that corresponds to their turn
-		if(sel.isOccupied() && sel.getOccupant().getColor() != currentTurn) {
+		//Ensure that the correct color Piece has been chosen
+		//The Piece's color should be equal to currentTurn, unless this is the first move
+		//in which case currentTurn is going to be Color.GREEN
+		if(sel.isOccupied()) 
+			if(sel.getOccupant().getColor() != currentTurn &&
+				currentTurn != Color.GREEN) {
 			piecesLabel.setText("Ash! This isn't the time to use that!");
 			return;
 		}
 		
-		if(!sel.isOccupied() && selectedSquare == null) {
-			//The user does not have a selected Piece, and has tried to select an empty location, so do nothing
+		
+		
+		/* Now, since we can be sure that the user has clicked on a piece of their own color, there are
+		 * only four scenarios:
+		 * 1) The user has nothing highlighted and wishes to highlight a new Square
+		 * 2) The user wishes to change the Square that is selected
+		 * 3) The user wishes to deselect the current Square
+		 * 4) The user wishes to perform a jump
+		 */
+		
+		
+		if(sel.isOccupied() && selectedSquare == null) {
+			//There is currently no square selected, so highlight all possible moves
+			selectedSquare = sel;
+			selectedSquare.setHighlight(true);
+			board.setMovesHighlighted(selectedSquare.getOccupant(), true);
+			return;
+			
 		}
 		
+		
+		
+		
+		else if(sel.isOccupied() && !sel.equals(selectedSquare)) {
+			//The user has clicked on a different Piece than the one currently selected
+			selectedSquare.setHighlight(false);
+			board.setMovesHighlighted(selectedSquare.getOccupant(), false);
+			
+			//Reset selectedSquare to the one currently under the cursor
+			selectedSquare = sel;
+			selectedSquare.setHighlight(true);
+			board.setMovesHighlighted(selectedSquare.getOccupant(), true);
+			return;
+			
+		}
+		
+		
+		else if(sel.equals(selectedSquare)) {
+			//The user has deselected the current square
+			selectedSquare.setHighlight(false);
+			board.setMovesHighlighted(selectedSquare.getOccupant(), false);
+			selectedSquare = null;
+		}
+		
+		
+
+		//Move-checking code
 		else if(!sel.isOccupied() && selectedSquare != null) {
 			//The user is trying to make a move by moving from the selectedSquare to the one they just clicked
 			//First check to see if their choice corresponds to a square in possibleMoves
@@ -162,12 +219,24 @@ public class SimpleCheckersGUI implements MouseListener,
 			boolean found = false;
 			boolean jumped = false;
 			
-			for(Square choice : possibleMoves) {
+			Vector<Square> oldPossibleMoves = board.getPossibleMoves(selectedSquare.getOccupant());
+			
+			for(Square choice : oldPossibleMoves) {
 				if(choice.equals(sel)) {
+					
 					//Move found in the Vector of possible moves, so perform it
-					//First, store in a variable whether or not a jump was performed
+					
+					//First, check to see if this was the first move being performed
+					if(currentTurn == Color.GREEN)
+						currentTurn = selectedSquare.getOccupant().getColor();
+					
+					//Next, store in a variable whether or not a jump was performed
 					jumped = board.move(selectedSquare, sel);
+					
+					//Finally, indicate internally that a move has been found and performed
 					found = true;
+					
+
 				}
 			}
 			
@@ -184,10 +253,10 @@ public class SimpleCheckersGUI implements MouseListener,
 					
 				}
 				
-				for(Square curr : possibleMoves) 
-					curr.setHighlight(false);
-				
+				//Unhighlight the moves from the Piece's previous position
 				selectedSquare.setHighlight(false);
+				for (Square unhighlight : oldPossibleMoves)
+					unhighlight.setHighlight(false);
 				selectedSquare = null;
 				
 				endTurn();
@@ -217,42 +286,11 @@ public class SimpleCheckersGUI implements MouseListener,
 		}
 		
 		
-		else if(sel.isOccupied() && selectedSquare == null) {
-			//There is currently no square selected, so proceed to highlight all possible moves
-			selectedSquare = sel;
-			selectedSquare.setHighlight(true);
+
 		
-			possibleMoves = board.getPossibleMoves(selectedSquare.getOccupant());
-			for(Square highlight : possibleMoves)
-				highlight.setHighlight(true);
-			
-		}
+
 		
-		else if(sel.equals(selectedSquare)) {
-			//The user has deselected the current square
-			selectedSquare.setHighlight(false);
-			
-			for(Square unHighlight : possibleMoves)
-				unHighlight.setHighlight(false);
-			
-			selectedSquare = null;
-		}
-		
-		else if(!sel.equals(selectedSquare)) {
-			//The user has clicked on a different square than the one currently selected
-			selectedSquare.setHighlight(false);
-			
-			for(Square unHighlight : possibleMoves)
-				unHighlight.setHighlight(false);
-			
-			//Reset selectedSquare to the one currently under the cursor
-			selectedSquare = sel;
-			selectedSquare.setHighlight(true);
-			possibleMoves = board.getPossibleMoves(selectedSquare.getOccupant());
-			for(Square Highlight : possibleMoves)
-				Highlight.setHighlight(true);
-			
-		}
+
 		
 	}
 
