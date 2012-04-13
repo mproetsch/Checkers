@@ -1,3 +1,8 @@
+/* Matthew Proetsch
+ * COP3330 Section 0001
+ * SimpleCheckersGUI.java (see Javadoc comment for details)
+ */
+
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.*;
@@ -8,6 +13,7 @@ import javax.swing.*;
 
 /** Creates a new instance of Board and draws a necessary graphical interface
  *  for the user to select possible moves. Provides options to exit and to start a new game
+ *  in the form of a menubar at the top of the window
  * 
  * 
  * @author Matthew Proetsch

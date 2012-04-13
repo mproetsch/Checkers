@@ -1,6 +1,13 @@
+/* Matthew Proetsch
+ * COP3330 Section 0001
+ * Square.java: See Javadoc comment for details
+ */
+
 import java.awt.*;
 
-/** Represents a single square contained in Board
+/** Represents a single square contained in Board, represented as a Canvas
+ *  Also stores the occupant of this position on the board, and squares
+ *  are aware of their position within the board.
  * 
  * 
  * @author Matthew Proetsch

@@ -1,7 +1,12 @@
+/* Matthew Proetsch
+ * COP3330 Section 0001
+ * Piece.java: see Javadoc comments for details
+ */
 import java.awt.*;
 
 /** A Piece on the game board that can be either red or black
- * 
+ *  Pieces are taken into account when redrawing a Square on the game board
+ *  and when a particular side runs out of pieces, the game is over
  * 
  * @author Matthew Proetsch
  * @version 0.9b

@@ -1,10 +1,16 @@
+/* Matthew Proetsch
+ * COP3330 Section 0001
+ * Board.java: See Javadoc for details
+ */
+
 import java.util.Vector;
 import java.awt.*;
 
 
-/** Stores the game board and relevant information, such as which pieces are on
- * which square
- * 
+/** Stores the game board as a 2D array of Squares. Also provides functionality to move the
+ *  Piece of one Square to another Square, and the ability to get all possible moves of a
+ *  particular Piece anywhere on the board
+ *  
  * Note: The Board is the underlying structure that is drawn to the GUI in CheckersGame.java
  *
  * @author Matthew Proetsch
