@@ -201,7 +201,6 @@ public class SimpleCheckersGUI implements MouseListener,
 						frame.dispose();
 					}
 						
-					
 				}
 			}
 			
