@@ -96,41 +96,16 @@ public class Board {
     	
 		//Have the Red side on top, Black side on bottom
 		//Establish the Red side first
-		boolean put = true;
-		for(int row = 0; row < 3; row++) {
-			for(int col = 0; col < 8; col++) {
-				
-				if(put) {
-					this.getSquare(row, col).setOccupant(new Piece(Color.RED, row, col));
-					put = false;
-				}
-				
-				//We want to alternate putting and not putting a new Square in the grid
-				else
-					put = true;
-		
-			}
-		
-			put = !put;
-    	}
+		for(int row = 0; row < 3; row++)
+			for(int col = 0; col < 8; col++)
+				if(getSquare(row, col).getBackgroundColor() == Square.BackgroundColor.DARKGRAY)
+					getSquare(row,col).setOccupant(new Piece(Color.RED, row, col));
 		
 		//Now establish the Black side
-		put = false;
-		for(int row = 5; row < 8; row++) {
-			for(int col = 0; col < 8; col++) {
-				
-				if(put) {
-					this.getSquare(row, col).setOccupant(new Piece(Color.BLACK, row, col));
-					put = false;
-				}
-				
-				else
-					put = true;
-				
-			}
-				
-			put = !put;
-		}
+		for(int row = 5; row < 8; row++)
+			for(int col = 0; col < 8; col++)
+				if(getSquare(row, col).getBackgroundColor() == Square.BackgroundColor.DARKGRAY)
+					getSquare(row,col).setOccupant(new Piece(Color.BLACK, row, col));
     }
     
     
@@ -225,6 +200,27 @@ public class Board {
 		
 		return possibleMoves;
 		
+	}
+	
+	
+	/** Highlight all the possible moves that can be made
+	 *
+	 * @param p 				The Piece whose possible moves we are highlighting
+	 * @param doHighlight		Whether or not these possible moves should be highlighted
+	 */
+	public void setMovesHighlighted(Piece p, boolean doHighlight) {
+		
+		Vector<Square> possibleMoves = getPossibleMoves(p);
+		
+		if(doHighlight) {
+			for(Square highlight : possibleMoves)
+				highlight.setHighlight(true);
+		}
+		
+		else {
+			for(Square highlight : possibleMoves)
+				highlight.setHighlight(false);
+		}
 	}
 	
 	
